@@ -3,10 +3,93 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:local="clr-namespace:WpfAppBoolTable"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        Title="MainWindow" Height="600" Width="800">
+    <TabControl>
+        <TabItem Header="По номеру">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel Margin="10">
+                    <!-- Ввод -->
+                    <GroupBox Header="Ввод параметров">
+                        <StackPanel Margin="5">
+                            <StackPanel Orientation="Horizontal" Margin="0,5">
+                                <TextBlock Text="Количество переменных:" VerticalAlignment="Center"/>
+                                <xctk:IntegerUpDown x:Name="InputN" Minimum="1" Maximum="5" Value="1"
+                                     Width="100" Height="18" Margin="2"/>
+                                <TextBlock Text="(максимум 5)" Margin="5" VerticalAlignment="Center" Foreground="Gray"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,5">
+                                <TextBlock Text="Номер функции:" VerticalAlignment="Center"/>
+                                <xctk:IntegerUpDown x:Name="InputNum" Minimum="0" Value="0"
+                                     Width="100" Height="18" Margin="2"/>
+                            </StackPanel>
+                            <!-- Кнопки -->
+                            <StackPanel Orientation="Horizontal">
+                                <Button Content="Таблица истинности" Click="BuildTruthTable"
+                                Margin="0,2.5,10,0" Padding="10,5"/>
+                                <Button Content="DNF" Click="BuildDNF"
+                                Margin="0,2.5,10,0" Padding="10,5"/>
+                                <Button Content="KNF" Click="BuildKNF"
+                                Margin="0,2.5,10,0" Padding="10,5"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </GroupBox>
 
-    </Grid>
+                    <!-- Результаты -->
+                    <GroupBox Header="Результаты" Margin="0.5">
+                        <StackPanel Margin="10">
+                            <TextBlock Text="Таблица истинности:" FontWeight="Bold"/>
+                            <!-- Таблица -->
+                            <DataGrid x:Name="TruthTableGrid"
+                                      
+                                      IsReadOnly="True"
+                                      Margin="0,5,0,10"
+                                      Height="200"
+                                      HeadersVisibility="Column"
+                                      CanUserAddRows="False"
+                                      CanUserDeleteRows="False"
+                                      AlternatingRowBackground="#FFEFEFEF"
+                                      FontFamily="Consolas"
+                                      FontSize="14"
+                            />
+
+                            <TextBlock Text="Двоичное представление функции:" FontWeight="Bold"/>
+                            <TextBox x:Name="BinaryExplanation" Margin="0,3,0,10"/>
+
+                            <TextBlock Text="Дизъюнктивная нормальная форма (DNF):" FontWeight="Bold"/>
+                            <TextBox x:Name="OutputDNF"
+                                     TextWrapping="Wrap"
+                                     VerticalScrollBarVisibility="Auto"
+                                     IsReadOnly="True"
+                                     FontFamily="Consolas"
+                                     Margin="0,5,0,10"
+                            />
+                            
+                            <TextBlock Text="Конъюнктивная нормальная форма (KNF):" FontWeight="Bold"/>
+                            <TextBox x:Name="OutputKNF"
+                                     TextWrapping="Wrap"
+                                     VerticalScrollBarVisibility="Auto"
+                                     IsReadOnly="True"
+                                     FontFamily="Consolas"
+                                     Margin="0,5,0,10"
+                            />
+
+                        </StackPanel>
+                    </GroupBox>
+                </StackPanel>
+            </ScrollViewer>
+        </TabItem>
+        <TabItem Header="По формуле">
+            <Grid>
+                
+            </Grid>
+        </TabItem>
+        <TabItem Header="Сравнение">
+            <Grid>
+                
+            </Grid>
+        </TabItem>
+    </TabControl>
 </Window>
