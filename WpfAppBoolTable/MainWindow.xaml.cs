@@ -19,30 +19,38 @@ namespace WpfAppBoolTable
 
         #region Вкладка "По номеру"
 
+        /// <summary>
+        /// Создаёт таблицу истинности по номеру функции
+        /// </summary>
         private void BuildTruthTable(object sender, RoutedEventArgs e)
         {
             try
             {
+                // Проверка ввода
                 if (!InputN?.Value.HasValue == true || !InputNum?.Value.HasValue == true)
                 {
                     MessageBox.Show("Заполните все параметры", "Ошибка");
                     return;
                 }
 
-                int n = (int)InputN.Value;
-                long num = InputNum.Value ?? 0;
+                int n = (int)InputN.Value;       // Кол-во переменных
+                long num = InputNum.Value ?? 0;  // Номер функции
 
+                // Строим таблицу по номеру
                 var truthTable = new TruthTable(n);
                 truthTable.BuildFromNumber(num);
 
+                // Отображаем в таблице WPF
                 UpdateTruthTableGrid(truthTable);
 
+                // Показываем бинарное представление
                 var values = truthTable.Table.Select(row => row.Result).ToArray();
                 BinaryExplanation.Text = BitUtils.ToBinaryString(values);
 
+                // Информируем о количестве возможных функций
                 CountInfo.Text = $"Всего функций для {n} переменных: {Math.Pow(2, Math.Pow(2, n)):G}";
 
-                // Очищаем старые DNF/KNF
+                // Сбрасываем старые результаты
                 OutputDNF.Clear();
                 OutputKNF.Clear();
             }
@@ -52,6 +60,9 @@ namespace WpfAppBoolTable
             }
         }
 
+        /// <summary>
+        /// Генерация ДНФ по номеру функции
+        /// </summary>
         private void BuildDNF(object sender, RoutedEventArgs e)
         {
             try
@@ -70,7 +81,6 @@ namespace WpfAppBoolTable
 
                 string dnf = DnfGenerator.BuildDNF(truthTable.Table, truthTable.VariableNames);
                 OutputDNF.Text = dnf;
-
             }
             catch (Exception ex)
             {
@@ -78,6 +88,9 @@ namespace WpfAppBoolTable
             }
         }
 
+        /// <summary>
+        /// Генерация КНФ по номеру функции
+        /// </summary>
         private void BuildKNF(object sender, RoutedEventArgs e)
         {
             try
@@ -96,7 +109,6 @@ namespace WpfAppBoolTable
 
                 string knf = KnfGenerator.BuildKNF(truthTable.Table, truthTable.VariableNames);
                 OutputKNF.Text = knf;
-
             }
             catch (Exception ex)
             {
@@ -104,6 +116,9 @@ namespace WpfAppBoolTable
             }
         }
 
+        /// <summary>
+        /// Копирует ДНФ в буфер обмена
+        /// </summary>
         private void CopyDNF_Click(object sender, RoutedEventArgs e)
         {
             if (!string.IsNullOrEmpty(OutputDNF?.Text))
@@ -113,6 +128,9 @@ namespace WpfAppBoolTable
             }
         }
 
+        /// <summary>
+        /// Копирует КНФ в буфер обмена
+        /// </summary>
         private void CopyKNF_Click(object sender, RoutedEventArgs e)
         {
             if (!string.IsNullOrEmpty(OutputKNF?.Text))
@@ -122,6 +140,9 @@ namespace WpfAppBoolTable
             }
         }
 
+        /// <summary>
+        /// Пример для отладки: n=3, номер функции=11
+        /// </summary>
         private void Preset_Number_1(object sender, RoutedEventArgs e)
         {
             InputN.Value = 3;
@@ -133,6 +154,9 @@ namespace WpfAppBoolTable
 
         #region Вкладка "По формуле"
 
+        /// <summary>
+        /// Разбирает формулу, строит таблицу истинности и вычисляет ДНФ/КНФ
+        /// </summary>
         private void ParseFormula_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -144,7 +168,7 @@ namespace WpfAppBoolTable
                     return;
                 }
 
-                // Получаем список переменных из формулы
+                // Лексический анализ: находим переменные
                 var tokens = Lexer.Lex(formula);
                 var variables = tokens
                     .Where(t => t.Type == TokenType.Variable)
@@ -161,15 +185,15 @@ namespace WpfAppBoolTable
 
                 int n = variables.Count;
 
-                // Преобразуем в ОПЗ
+                // Преобразование в обратную польскую запись (ОПЗ)
                 var rpnTokens = ParserRpn.ToRpn(tokens);
 
-                // Создаем таблицу истинности
+                // Создаем таблицу истинности вручную
                 var truthTable = new TruthTable(n);
                 truthTable.VariableNames.Clear();
                 truthTable.VariableNames.AddRange(variables);
 
-                // Генерируем все комбинации и вычисляем функцию
+                // Все возможные комбинации входов
                 var allTuples = BitUtils.GenerateAllTuples(n);
                 truthTable.Table.Clear();
 
@@ -177,25 +201,24 @@ namespace WpfAppBoolTable
                 {
                     var variableValues = new Dictionary<string, bool>();
                     for (int i = 0; i < n; i++)
-                    {
                         variableValues[variables[i]] = tuple[i];
-                    }
 
                     bool result = ExpressionEvaluator.Evaluate(rpnTokens, variableValues);
                     truthTable.Table.Add(new TupleResult(tuple, result));
                 }
 
-                // Обновляем интерфейс
+                // Обновляем таблицу на экране
                 UpdateFormulaTableGrid(truthTable);
 
+                // Генерация ДНФ и КНФ
                 string dnf = DnfGenerator.BuildDNF(truthTable.Table, truthTable.VariableNames);
                 string knf = KnfGenerator.BuildKNF(truthTable.Table, truthTable.VariableNames);
 
                 FormulaDNF.Text = dnf;
                 FormulaKNF.Text = knf;
 
-                FormulaCountInfo.Text = $"Формула использует {n} переменных: {string.Join(", ", variables)}";
-
+                FormulaCountInfo.Text =
+                    $"Формула использует {n} переменных: {string.Join(", ", variables)}";
             }
             catch (Exception ex)
             {
@@ -203,6 +226,9 @@ namespace WpfAppBoolTable
             }
         }
 
+        /// <summary>
+        /// Копирует ДНФ из вкладки "По формуле"
+        /// </summary>
         private void CopyFormulaDNF_Click(object sender, RoutedEventArgs e)
         {
             if (!string.IsNullOrEmpty(FormulaDNF?.Text))
@@ -212,6 +238,9 @@ namespace WpfAppBoolTable
             }
         }
 
+        /// <summary>
+        /// Копирует КНФ из вкладки "По формуле"
+        /// </summary>
         private void CopyFormulaKNF_Click(object sender, RoutedEventArgs e)
         {
             if (!string.IsNullOrEmpty(FormulaKNF?.Text))
@@ -221,6 +250,9 @@ namespace WpfAppBoolTable
             }
         }
 
+        /// <summary>
+        /// Пример формулы для теста
+        /// </summary>
         private void Preset_Formula_Implication(object sender, RoutedEventArgs e)
         {
             InputFormula.Text = "(x1 | x2) -> x3";
@@ -231,6 +263,9 @@ namespace WpfAppBoolTable
 
         #region Вкладка "Сравнение"
 
+        /// <summary>
+        /// Проверяет эквивалентность двух функций (по номеру или формуле)
+        /// </summary>
         private void CompareFunctions_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -242,7 +277,7 @@ namespace WpfAppBoolTable
                     return;
                 }
 
-                // Получаем таблицу для функции A
+                // Таблица A
                 var tableA = GetFunctionTable(
                     ARadioByNumber?.IsChecked == true,
                     A_n.Value ?? 1,
@@ -250,7 +285,7 @@ namespace WpfAppBoolTable
                     A_formula?.Text
                 );
 
-                // Получаем таблицу для функции B
+                // Таблица B
                 var tableB = GetFunctionTable(
                     BRadioByNumber?.IsChecked == true,
                     B_n.Value ?? 1,
@@ -258,7 +293,7 @@ namespace WpfAppBoolTable
                     B_formula?.Text
                 );
 
-                // Сравниваем
+                // Сравнение эквивалентности
                 bool areEquivalent = FunctionComparer.AreEquivalent(
                     tableA.Table, tableB.Table, out bool[] counterExample);
 
@@ -280,6 +315,9 @@ namespace WpfAppBoolTable
             }
         }
 
+        /// <summary>
+        /// Создаёт таблицу функции по номеру или формуле (универсальный метод)
+        /// </summary>
         private TruthTable GetFunctionTable(bool byNumber, int n, long num, string formula)
         {
             var truthTable = new TruthTable(n);
@@ -290,7 +328,6 @@ namespace WpfAppBoolTable
             }
             else
             {
-                // По формуле
                 if (string.IsNullOrEmpty(formula))
                     throw new Exception("Введите формулу");
 
@@ -316,9 +353,7 @@ namespace WpfAppBoolTable
                 {
                     var variableValues = new Dictionary<string, bool>();
                     for (int i = 0; i < n; i++)
-                    {
                         variableValues[variables[i]] = tuple[i];
-                    }
 
                     bool result = ExpressionEvaluator.Evaluate(rpnTokens, variableValues);
                     truthTable.Table.Add(new TupleResult(tuple, result));
@@ -328,13 +363,15 @@ namespace WpfAppBoolTable
             return truthTable;
         }
 
+        /// <summary>
+        /// Пример сравнения двух простых функций (n=2)
+        /// </summary>
         private void Preset_Compare_Example(object sender, RoutedEventArgs e)
         {
-            // Пример: две разные функции с n=2
             A_n.Value = 2;
-            A_num.Value = 3;  // 0011 - функция, равная x2
+            A_num.Value = 3;  // f = x2
             B_n.Value = 2;
-            B_num.Value = 5;  // 0101 - функция, равная x1
+            B_num.Value = 5;  // f = x1
             CompareFunctions_Click(sender, e);
         }
 
@@ -342,10 +379,14 @@ namespace WpfAppBoolTable
 
         #region Вспомогательные методы
 
+        /// <summary>
+        /// Обновляет DataGrid для вывода таблицы по номеру функции
+        /// </summary>
         private void UpdateTruthTableGrid(TruthTable truthTable)
         {
             TruthTableGrid.Columns.Clear();
 
+            // Добавляем столбцы для каждой переменной
             for (int i = 0; i < truthTable.VariableNames.Count; i++)
             {
                 TruthTableGrid.Columns.Add(new DataGridTextColumn
@@ -355,6 +396,7 @@ namespace WpfAppBoolTable
                 });
             }
 
+            // Добавляем столбец результата f
             TruthTableGrid.Columns.Add(new DataGridTextColumn
             {
                 Header = "f",
@@ -364,6 +406,9 @@ namespace WpfAppBoolTable
             TruthTableGrid.ItemsSource = truthTable.Table;
         }
 
+        /// <summary>
+        /// Обновляет DataGrid для вывода таблицы по формуле.
+        /// </summary>
         private void UpdateFormulaTableGrid(TruthTable truthTable)
         {
             FormulaTableGrid.Columns.Clear();
@@ -386,10 +431,12 @@ namespace WpfAppBoolTable
             FormulaTableGrid.ItemsSource = truthTable.Table;
         }
 
-        #endregion
+        
     }
 
-    // Конвертер для отображения bool как 0/1 в DataGrid
+    /// <summary>
+    /// Конвертер, отображающий bool как "0"/"1" в таблице
+    /// </summary>
     public class BoolToIntConverter : System.Windows.Data.IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
@@ -402,4 +449,5 @@ namespace WpfAppBoolTable
             throw new NotImplementedException();
         }
     }
+    #endregion
 }
