@@ -25,7 +25,7 @@ namespace ClassLibraryBoolTable.Util
             {
                 bool[] tuple = new bool[n];
                 for (int j = 0; j < n; j++)
-                    tuple[n - j - 1] = ((i >> j) & 1) == 1;
+                    tuple[n - j - 1] = ((i >> j) & 1) == 1; // берем число i (101) и по одному биту с конца забираем его в массив
 
                 tuples.Add(tuple);
             }
@@ -45,7 +45,7 @@ namespace ClassLibraryBoolTable.Util
             bool[] values = new bool[length];
 
             for (int i = 0; i < length; i++)
-                values[length - i - 1] = ((num >> i) & 1) == 1;
+                values[length - i - 1] = ((num >> i) & 1) == 1;   // результаты булевой функции для таблицы истинности
 
             return values;
         }

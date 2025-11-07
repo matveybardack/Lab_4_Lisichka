@@ -16,7 +16,7 @@ namespace LogicLibrary.Tests
         public void TruthTable_FromNumber_ShouldMatchExpected()
         {
             var table = new TruthTable(3);
-            table.BuildFromNumber(11); // 11 = 1011₂
+            table.BuildFromNumber(11); // 11 = 1011
             var expectedResults = new bool[] { false, false, false, true, true, false, true, true };
 
             for (int i = 0; i < table.Table.Count; i++)
@@ -29,7 +29,7 @@ namespace LogicLibrary.Tests
         public void DNF_ShouldBuildCorrectly()
         {
             var table = new TruthTable(2);
-            table.BuildFromNumber(6); // 6 = 0110₂
+            table.BuildFromNumber(6); // 6 = 0110
             string dnf = DnfGenerator.BuildDNF(table.Table, table.VariableNames);
 
             Assert.AreEqual("(!x1 & x2) | (x1 & !x2)", dnf);
@@ -39,7 +39,7 @@ namespace LogicLibrary.Tests
         public void KNF_ShouldBuildCorrectly()
         {
             var table = new TruthTable(2);
-            table.BuildFromNumber(6); // 0110₂
+            table.BuildFromNumber(6); // 6 = 0110
             string knf = KnfGenerator.BuildKNF(table.Table, table.VariableNames);
 
             Assert.AreEqual("(x1 | x2) & (!x1 | !x2)", knf);

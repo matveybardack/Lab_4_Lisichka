@@ -11,7 +11,7 @@ namespace ClassLibraryBoolTable.Parser
     /// </summary>
     public enum TokenType
     {
-        Variable,   // x1, x2, ...
+        Variable,   // x1, x2
         Not,        // !, not
         And,        // &, and
         Or,         // |, or
