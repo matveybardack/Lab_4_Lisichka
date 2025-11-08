@@ -1,0 +1,105 @@
+@startuml Диаграмма классов
+' Created by Kilo Code
+
+' General style
+skinparam classAttributeIconSize 0
+skinparam monochrome true
+skinparam shadowing false
+skinparam class {
+    BackgroundColor White
+    ArrowColor Black
+    BorderColor Black
+}
+
+' Namespaces
+namespace WpfAppBoolTable {
+    class MainWindow
+}
+
+namespace ClassLibraryBoolTable.Models {
+    class TupleResult {
+        + Variables: bool[]
+        + Result: bool
+        + ToString(): string
+    }
+}
+
+namespace ClassLibraryBoolTable.Parser {
+    enum TokenType {
+        Variable
+        Not, And, Or, Xor
+        Impl, Equiv
+        LParen, RParen
+    }
+
+    class Token {
+        + Type: TokenType
+        + Value: string
+        + ToString(): string
+    }
+
+    class Lexer <<static>> {
+        + Lex(input: string): List<Token>
+    }
+
+    class ParserRpn <<static>> {
+        + ToRpn(tokens: List<Token>): List<Token>
+    }
+
+    class ExpressionEvaluator <<static>> {
+        + Evaluate(rpnTokens: List<Token>, variableValues: Dictionary<string, bool>): bool
+    }
+}
+
+namespace ClassLibraryBoolTable.Service {
+    class TruthTable {
+        + VariableNames: List<string>
+        + Table: List<TupleResult>
+        + BuildFromNumber(num: long): void
+        + BuildFromFunction(func: Func<bool[], bool>): void
+        + ToTableString(): string
+    }
+
+    class DnfGenerator <<static>> {
+        + BuildDNF(table: List<TupleResult>, variableNames: List<string>): string
+    }
+
+    class KnfGenerator <<static>> {
+        + BuildKNF(table: List<TupleResult>, variableNames: List<string>): string
+    }
+
+    class FunctionComparer <<static>> {
+        + AreEquivalent(table1: List<TupleResult>, table2: List<TupleResult>, out counterExample: bool[]): bool
+    }
+}
+
+namespace ClassLibraryBoolTable.Util {
+    class BitUtils <<static>> {
+        + GenerateAllTuples(n: int): List<bool[]>
+        + DecodeFunction(n: int, num: long): bool[]
+        + ToBinaryString(bits: bool[]): string
+    }
+}
+
+' Relationships
+WpfAppBoolTable.MainWindow ..> ClassLibraryBoolTable.Service.TruthTable : uses
+WpfAppBoolTable.MainWindow ..> ClassLibraryBoolTable.Parser.Lexer : uses
+WpfAppBoolTable.MainWindow ..> ClassLibraryBoolTable.Parser.ParserRpn : uses
+WpfAppBoolTable.MainWindow ..> ClassLibraryBoolTable.Parser.ExpressionEvaluator : uses
+WpfAppBoolTable.MainWindow ..> ClassLibraryBoolTable.Service.DnfGenerator : uses
+WpfAppBoolTable.MainWindow ..> ClassLibraryBoolTable.Service.KnfGenerator : uses
+WpfAppBoolTable.MainWindow ..> ClassLibraryBoolTable.Service.FunctionComparer : uses
+WpfAppBoolTable.MainWindow ..> ClassLibraryBoolTable.Util.BitUtils : uses
+
+ClassLibraryBoolTable.Service.TruthTable *-- "1..*" ClassLibraryBoolTable.Models.TupleResult
+ClassLibraryBoolTable.Service.TruthTable ..> ClassLibraryBoolTable.Util.BitUtils : uses
+
+ClassLibraryBoolTable.Parser.Lexer ..> ClassLibraryBoolTable.Parser.Token : creates
+ClassLibraryBoolTable.Parser.ParserRpn ..> ClassLibraryBoolTable.Parser.Token : uses
+ClassLibraryBoolTable.Parser.ExpressionEvaluator ..> ClassLibraryBoolTable.Parser.Token : uses
+
+ClassLibraryBoolTable.Service.DnfGenerator ..> ClassLibraryBoolTable.Models.TupleResult : uses
+ClassLibraryBoolTable.Service.KnfGenerator ..> ClassLibraryBoolTable.Models.TupleResult : uses
+ClassLibraryBoolTable.Service.FunctionComparer ..> ClassLibraryBoolTable.Models.TupleResult : uses
+
+@enduml
