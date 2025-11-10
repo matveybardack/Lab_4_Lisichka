@@ -308,6 +308,11 @@ namespace WpfAppBoolTable
                     CompareResult.Text = $"Функции НЕ ЭКВИВАЛЕНТНЫ\nКонтрпример: {counterExampleStr}";
                     CompareResult.Foreground = System.Windows.Media.Brushes.Red;
                 }
+
+                // Отображаем таблицы
+                UpdateCompareTableGrid(CompareTableA, tableA);
+                UpdateCompareTableGrid(CompareTableB, tableB);
+
             }
             catch (Exception ex)
             {
@@ -373,6 +378,29 @@ namespace WpfAppBoolTable
             B_n.Value = 2;
             B_num.Value = 5;  // f = x1
             CompareFunctions_Click(sender, e);
+        }
+
+        /// <summary>
+        /// Обновляет таблицы истинности для 2 функций
+        /// </summary>
+        private void UpdateCompareTableGrid(DataGrid grid, TruthTable table)
+        {
+            grid.Columns.Clear();
+            foreach (var v in table.VariableNames)
+            {
+                grid.Columns.Add(new DataGridTextColumn
+                {
+                    Header = v,
+                    Binding = new System.Windows.Data.Binding($"Variables[{table.VariableNames.IndexOf(v)}]")
+                    { Converter = new BoolToIntConverter() }
+                });
+            }
+            grid.Columns.Add(new DataGridTextColumn
+            {
+                Header = "f",
+                Binding = new System.Windows.Data.Binding("Result") { Converter = new BoolToIntConverter() }
+            });
+            grid.ItemsSource = table.Table;
         }
 
         #endregion

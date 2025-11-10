@@ -4,9 +4,62 @@
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         Title="Логические функции — ЛР4" Height="780" Width="980">
 
-    <TabControl>
+    <Window.Resources>
+        <Style TargetType="Button">
+            <Setter Property="Margin" Value="4"/>
+            <Setter Property="FontWeight" Value="Semibold"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Background" Value="#FF007ACC"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                Padding="5"
+                                CornerRadius="5">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#FF2897FF"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#FF1E70C1"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
 
-        <!-- = Вкладка: По номеру = -->
+        <Style TargetType="TextBlock">
+            <Setter Property="FontSize" Value="14"/>
+        </Style>
+
+        <Style TargetType="GroupBox">
+            <Setter Property="FontSize" Value="14"/>
+        </Style>
+
+        <Style TargetType="TextBox">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+
+        <Style TargetType="DataGrid">
+            <Setter Property="FontSize" Value="14"/>
+        </Style>
+
+        <Style TargetType="RadioButton">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+    </Window.Resources>
+
+
+    <TabControl>
+        <!-- Вкладка: По номеру -->
         <TabItem Header="По номеру">
             <ScrollViewer>
                 <StackPanel Margin="12" >
@@ -29,18 +82,14 @@
 
                             <!-- Кнопки -->
                             <StackPanel Orientation="Horizontal" Margin="0,8">
-                                <Button Content="Таблица истинности" Click="BuildTruthTable" 
-                                        Margin="0,2.5,10,0" Padding="10,5"/>
-                                <Button Content="DNF" Click="BuildDNF" 
-                                        Margin="0,2.5,10,0" Padding="10,5"/>
-                                <Button Content="KNF" Click="BuildKNF" 
-                                        Margin="0,2.5,10,0" Padding="10,5"/>
-                                <Button Content="Пресет (n=3, num=11)" Click="Preset_Number_1" 
-                                        Margin="0,2.5,10,0" Padding="10,5"/>
+                                <Button Content="Таблица истинности" Click="BuildTruthTable" />
+                                <Button Content="DNF" Click="BuildDNF"/>
+                                <Button Content="KNF" Click="BuildKNF"/>
+                                <Button Content="Пресет (n=3, num=11)" Click="Preset_Number_1"/>
                             </StackPanel>
 
                             <!-- "Озвучка" символов -->
-                            <TextBlock Margin="0,6" Foreground="Gray" FontSize="12">
+                            <TextBlock Margin="0,6" Foreground="Gray">
                                 Операции: ! — НЕ, &amp; — И, | — ИЛИ, ^ — XOR, -> — импликация, = — эквиваленция.
                             </TextBlock>
                         </StackPanel>
@@ -55,7 +104,7 @@
                                       IsReadOnly="True"
                                       Height="240"
                                       Margin="0,6"
-                                      AlternatingRowBackground="#FFF7F7F7"
+                                      AlternatingRowBackground="#FFEFEFEF"
                                       FontFamily="Consolas"/>
 
                             <TextBlock Text="Двоичное представление функции (от младшего к старшему биту):" FontWeight="Bold" Margin="0,6,0,2"/>
@@ -63,7 +112,7 @@
 
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <TextBlock Text="DNF:" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,8,0"/>
-                                <Button Content="Скопировать DNF" Click="CopyDNF_Click" Margin="0,2.5,10,0" Padding="10,5"/>
+                                <Button Content="Скопировать DNF" Click="CopyDNF_Click"/>
                             </StackPanel>
                             <TextBox x:Name="OutputDNF"
                                      TextWrapping="Wrap"
@@ -72,10 +121,10 @@
                                      FontFamily="Consolas"
                                      Margin="0,5,0,10"
                             />
-                            
+
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <TextBlock Text="KNF:" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,8,0"/>
-                                <Button Content="Скопировать KNF" Click="CopyKNF_Click" Margin="0,2.5,10,0" Padding="10,5"/>
+                                <Button Content="Скопировать KNF" Click="CopyKNF_Click"/>
                             </StackPanel>
                             <TextBox x:Name="OutputKNF"
                                      TextWrapping="Wrap"
@@ -87,7 +136,7 @@
 
                             <TextBlock x:Name="CountInfo" Foreground="Gray" Margin="0,6"/>
                             <TextBlock Text="При больших n время вычисления растёт экспоненциально (O(2ⁿ))"
-                                       Foreground="Gray" FontStyle="Italic" FontSize="12" Margin="0,6"/>
+                                       Foreground="Gray" FontStyle="Italic" Margin="0,6"/>
                         </StackPanel>
                     </GroupBox>
                 </StackPanel>
@@ -103,12 +152,10 @@
                             <TextBlock Text="Формула (пример: (x1 | x2) -> x3)" />
                             <TextBox x:Name="InputFormula" Width="680" Height="30" Margin="0,4,0,4" HorizontalAlignment="Left"/>
                             <StackPanel Orientation="Horizontal">
-                                <Button Content="Разобрать и вычислить" Click="ParseFormula_Click" 
-                                        Margin="0,2.5,10,0" Padding="10,5"/>
-                                <Button Content="Пресет: (x1 | x2) -> x3" Click="Preset_Formula_Implication" 
-                                        Margin="0,2.5,10,0" Padding="10,5"/>
+                                <Button Content="Разобрать и вычислить" Click="ParseFormula_Click" />
+                                <Button Content="Пресет: (x1 | x2) -> x3" Click="Preset_Formula_Implication" />
                             </StackPanel>
-                            <TextBlock Foreground="Gray" Margin="0,8,0,0" FontSize="12">
+                            <TextBlock Foreground="Gray" Margin="0,8,0,0">
                                 Операции: ! — НЕ, &amp; — И, | — ИЛИ, ^ — XOR, -> — импликация, = — эквиваленция.
                             </TextBlock>
                         </StackPanel>
@@ -122,13 +169,12 @@
                                       IsReadOnly="True"
                                       Height="240"
                                       Margin="0,6"
-                                      AlternatingRowBackground="#FFF7F7F7"
+                                      AlternatingRowBackground="#FFEFEFEF"
                                       FontFamily="Consolas"/>
 
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,6">
                                 <TextBlock Text="DNF:" FontWeight="Bold" VerticalAlignment="Center"/>
-                                <Button Content="Скопировать DNF" Click="CopyFormulaDNF_Click" 
-                                        Margin="0,2.5,10,0" Padding="10,5"/>
+                                <Button Content="Скопировать DNF" Click="CopyFormulaDNF_Click" />
                             </StackPanel>
                             <TextBox x:Name="FormulaDNF"
                                      TextWrapping="Wrap"
@@ -139,8 +185,7 @@
                             />
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <TextBlock Text="KNF:" FontWeight="Bold" VerticalAlignment="Center"/>
-                                <Button Content="Скопировать KNF" Click="CopyFormulaKNF_Click" 
-                                        Margin="0,2.5,10,0" Padding="10,5"/>
+                                <Button Content="Скопировать KNF" Click="CopyFormulaKNF_Click" />
                             </StackPanel>
                             <TextBox x:Name="FormulaKNF"
                                      TextWrapping="Wrap"
@@ -151,7 +196,7 @@
                             />
                             <TextBlock x:Name="FormulaCountInfo" Foreground="Gray" Margin="0,6"/>
                             <TextBlock Text="При больших n время вычисления растёт экспоненциально (O(2ⁿ))" 
-                                       Foreground="Gray" FontStyle="Italic" FontSize="12" Margin="0,6"/>
+                                       Foreground="Gray" FontStyle="Italic" Margin="0,6"/>
                         </StackPanel>
                     </GroupBox>
                 </StackPanel>
@@ -173,13 +218,14 @@
                                 <TextBlock Text="n:" VerticalAlignment="Center"/>
                                 <xctk:IntegerUpDown x:Name="A_n" Minimum="1" Maximum="5" Value="1" Width="80" Margin="6,0"/>
                                 <TextBlock Text="num:" VerticalAlignment="Center" Margin="12,0,0,0"/>
-                                <xctk:LongUpDown x:Name="A_num" Minimum="0" Value="0" Width="150"/>
+                                <xctk:LongUpDown x:Name="A_num" Minimum="0" Maximum="4294967295" Value="0" 
+                                                 Width="150" Margin="6,0" />
                             </StackPanel>
 
                             <TextBlock Text="Формула:" Margin="0,6,0,0"/>
                             <TextBox x:Name="A_formula" Width="650" Height="28" Margin="0,2" HorizontalAlignment="Left"/>
                             <!-- "Озвучка" символов -->
-                            <TextBlock Margin="0,6" Foreground="Gray" FontSize="12">
+                            <TextBlock Margin="0,6" Foreground="Gray">
                                 Операции: ! — НЕ, &amp; — И, | — ИЛИ, ^ — XOR, -> — импликация, = — эквиваленция.
                             </TextBlock>
                         </StackPanel>
@@ -196,27 +242,59 @@
                                 <TextBlock Text="n:" VerticalAlignment="Center"/>
                                 <xctk:IntegerUpDown x:Name="B_n" Minimum="1" Maximum="5" Value="1" Width="80" Margin="6,0"/>
                                 <TextBlock Text="num:" VerticalAlignment="Center" Margin="12,0,0,0"/>
-                                <xctk:LongUpDown x:Name="B_num" Minimum="0" Value="0" Width="150"/>
+                                <xctk:LongUpDown x:Name="B_num" Minimum="0" Maximum="4294967295" Value="0" 
+                                                 Width="150" Margin="6,0"/>
                             </StackPanel>
 
                             <TextBlock Text="Формула:" Margin="0,6,0,0"/>
                             <TextBox x:Name="B_formula" Width="650" Height="28" Margin="0,2" HorizontalAlignment="Left"/>
                             <!-- "Озвучка" символов -->
-                            <TextBlock Margin="0,6" Foreground="Gray" FontSize="12">
+                            <TextBlock Margin="0,6" Foreground="Gray">
                                 Операции: ! — НЕ, &amp; — И, | — ИЛИ, ^ — XOR, -> — импликация, = — эквиваленция.
                             </TextBlock>
                         </StackPanel>
                     </GroupBox>
 
                     <StackPanel Orientation="Horizontal" Margin="0,6">
-                        <Button Content="Эквивалентны?" Click="CompareFunctions_Click" 
-                                Margin="0,2.5,10,0" Padding="10,5"/>
-                        <Button Content="Пресет сравнения" Click="Preset_Compare_Example" 
-                                Margin="0,2.5,10,0" Padding="10,5"/>
+                        <Button Content="Эквивалентны?" Click="CompareFunctions_Click" />
+                        <Button Content="Пресет сравнения" Click="Preset_Compare_Example" />
                     </StackPanel>
 
                     <TextBlock x:Name="CompareResult" FontSize="16" FontWeight="Bold" Margin="8"/>
-                    <TextBlock Text="При больших n время вычисления растёт экспоненциально (O(2ⁿ))" Foreground="Gray" FontStyle="Italic" FontSize="12" Margin="8"/>
+                    <Grid Margin="5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Таблица A -->
+                        <StackPanel Grid.Column="0" Margin="5">
+                            <TextBlock Text="Таблица истинности функции A:" FontWeight="Bold" Margin="0,0,0,5"/>
+                            <DataGrid x:Name="CompareTableA"
+                                      AutoGenerateColumns="False"
+                                      IsReadOnly="True"
+                                      Height="200"
+                                      AlternatingRowBackground="#FFEFEFEF"
+                                      FontFamily="Consolas"/>
+                        </StackPanel>
+
+                        <Separator Grid.Column="1" Width="20"/>
+
+                        <!-- Таблица B -->
+                        <StackPanel Grid.Column="2" Margin="5">
+                            <TextBlock Text="Таблица истинности функции B:" FontWeight="Bold" Margin="0,0,0,5"/>
+                            <DataGrid x:Name="CompareTableB"
+                                      AutoGenerateColumns="False"
+                                      IsReadOnly="True"
+                                      Height="200"
+                                      AlternatingRowBackground="#FFEFEFEF"
+                                      FontFamily="Consolas"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <TextBlock Text="При больших n время вычисления растёт экспоненциально (O(2ⁿ))" 
+                               Foreground="Gray" FontStyle="Italic" Margin="8"/>
                 </StackPanel>
             </ScrollViewer>
         </TabItem>
