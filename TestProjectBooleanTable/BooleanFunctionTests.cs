@@ -17,7 +17,7 @@ namespace LogicLibrary.Tests
         {
             var table = new TruthTable(3);
             table.BuildFromNumber(11); // 11 = 1011
-            var expectedResults = new bool[] { false, false, false, true, true, false, true, true };
+            var expectedResults = new bool[] { false, false, false, false, true, false, true, true };
 
             for (int i = 0; i < table.Table.Count; i++)
             {

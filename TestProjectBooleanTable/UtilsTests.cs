@@ -19,7 +19,7 @@ namespace LogicLibrary.Tests
         public void DecodeFunction_ShouldProduceCorrectValues()
         {
             var values = BitUtils.DecodeFunction(3, 11); // 1011₂
-            var expected = new bool[] { false, false, true, true, true, false, true, true };
+            var expected = new bool[] { false, false, false, false, true, false, true, true };
             Assert.IsTrue(values.SequenceEqual(expected));
         }
     }
